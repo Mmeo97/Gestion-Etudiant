@@ -16,12 +16,12 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 const db = mysql.createConnection({
-  host: "roundhouse.proxy.rlwy.net", 
-  user: "root",
-  password: "wUBybWnXVaITRBPqTHEnXnJGTZQCxCfJ",
-  database: "gestion_etudiants",
-  port: 59152,
-});  
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+  }); 
 
 db.connect((err) => {
   if (err) {
@@ -69,7 +69,7 @@ app.put("/students/:id", (req, res) => {
   );
 });
 
-app.delete("/students/:id", (req, res) => {
+app.delete("/students/:id", (req, res) => { 
   db.query("DELETE FROM etudiant WHERE id=?", [req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Étudiant supprimé avec succès" });
