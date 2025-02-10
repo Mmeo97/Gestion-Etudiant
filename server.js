@@ -6,17 +6,22 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+
+const corsOptions = {
+  origin: "https://abdelghafour-elhalouani.netlify.app", // frontend 
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
-
 const db = mysql.createConnection({
-    host: "roundhouse.proxy.rlwy.net", 
-    user: "root",
-    password: "wUBybWnXVaITRBPqTHEnXnJGTZQCxCfJ",
-    database: "gestion_etudiants",
-    port: 59152,
-  });  
+  host: "roundhouse.proxy.rlwy.net", 
+  user: "root",
+  password: "wUBybWnXVaITRBPqTHEnXnJGTZQCxCfJ",
+  database: "gestion_etudiants",
+  port: 59152,
+});  
 
 db.connect((err) => {
   if (err) {
@@ -32,12 +37,14 @@ app.get("/students", (req, res) => {
     res.json(results);
   });
 });
+
 app.get("/students/:id", (req, res) => {
   db.query("SELECT * FROM etudiant WHERE id = ?", [req.params.id], (err, results) => {
     if (err) return res.status(500).json(err);
     res.json(results[0]);
   });
 });
+
 app.post("/students", (req, res) => {
   const { nom, prenom, email, tel, date_naissance, filiere } = req.body;
   db.query(
@@ -49,6 +56,7 @@ app.post("/students", (req, res) => {
     }
   );
 });
+
 app.put("/students/:id", (req, res) => {
   const { nom, prenom, email, tel, date_naissance, filiere } = req.body;
   db.query(
@@ -60,6 +68,7 @@ app.put("/students/:id", (req, res) => {
     }
   );
 });
+
 app.delete("/students/:id", (req, res) => {
   db.query("DELETE FROM etudiant WHERE id=?", [req.params.id], (err) => {
     if (err) return res.status(500).json(err);
@@ -67,7 +76,7 @@ app.delete("/students/:id", (req, res) => {
   });
 });
 
-// Start the server
+// server open
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
